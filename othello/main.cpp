@@ -18,11 +18,44 @@ struct Location {
 #define nextmovechar 'z'
 const int wayx[] = { 1, 1 , 1 , 0 , 0 , -1 , -1 , -1 };
 const int wayy[] = { 0,-1 , 1 , 1 ,-1 ,  0 , -1 ,  1 };
+int p1count = 2;
+int p2count = 2;
+int othello_map[mapWith][mapHeight];  // x , y
+int movecount;
+Location curentLocation;
+
+void compute_where_can_go();
+
+bool mapisempty(char s) {
+	return s == emptycharmap || s == nextmovechar;
+}
+
+void gotoxy(int x, int y)
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorCoord;
+	cursorCoord.X = x;
+	cursorCoord.Y = y;
+	SetConsoleCursorPosition(consoleHandle, cursorCoord);
+}
+
+void clrscr()
+{
+	system("cls");
+}
+
+void setTextColor(int textColor, int backColor = 0)
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	int colorAttribute = backColor << 4 | textColor;
+	SetConsoleTextAttribute(consoleHandle, colorAttribute);
+}
 
 
 
 
-void print_game_logo(int x, int y ) {
+
+void print_game_logo(int x, int y) {
 	setTextColor(21, 7);
 	gotoxy(x, ++y);
 	printf("______/\\\\\\\\\\_______________________/\\\\\\___________________________/\\\\\\\\\\\\______/\\\\\\\\\\\\___________________       ");
@@ -41,7 +74,7 @@ void print_game_logo(int x, int y ) {
 	gotoxy(x, ++y);
 	printf("       ___\\///\\\\\\\\\\/_________\\//\\\\\\\\\\____\\/\\\\\\___\\/\\\\\\___\\//\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\___\\///\\\\\\\\\\/__ ");
 	gotoxy(x, ++y);
-	printf("        _____\\/////____________\\/////_____\\///____\\///_____\\//////////___\\/////////___\\/////////______\\/////____"   );
+	printf("        _____\\/////____________\\/////_____\\///____\\///_____\\//////////___\\/////////___\\/////////______\\/////____");
 	setTextColor(2, 0);
 
 }
@@ -57,5 +90,17 @@ void start_anim() {
 }
 void main() {
 	start_anim();
+	init_map();
 
+	printBoard();
+
+	printgame_data(20, 20);
+	othello_map[2][2] = player1charonmap;
+	othello_map[3][3] = player1charonmap;
+	othello_map[3][2] = player2charonmap;
+	othello_map[2][3] = player2charonmap;
+	updateMap();
+	while (true) {
+		changeLocation(curentLocation);
+	}
 }
